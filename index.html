@@ -36,17 +36,18 @@ button:focus-visible,.btn:focus-visible,.tool:focus-visible{outline:2px solid va
  .sidebar,.rightbar{display:none}.stage{flex:1;min-height:0;width:100%;overflow:hidden}
  .toolbar{justify-content:flex-start;gap:3px;height:54px;min-height:54px;padding:0 7px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x}
  .toolbar::-webkit-scrollbar{display:none}.toolgroup{padding:0 4px;gap:3px;flex:none}.tool{width:44px;height:44px;min-width:44px;font-size:17px}
- .mobile-tools{display:flex}.canvas-area{width:100%;min-height:0;flex:1;overflow:auto;align-items:center;padding:16px 10px calc(26px + env(safe-area-inset-bottom));gap:16px;touch-action:pan-y pinch-zoom}
- .paper-wrap{max-width:100%;height:auto}.paper-wrap canvas.pdf-page{width:100%!important;height:auto!important}
+ .mobile-tools{display:flex}.canvas-area{width:100%;min-height:0;flex:1;overflow:auto;align-items:flex-start;padding:16px 10px calc(26px + env(safe-area-inset-bottom));gap:16px;touch-action:pan-y pinch-zoom}
+ .paper-wrap{max-width:none;height:auto;flex:none;margin-inline:auto}.paper-wrap canvas.pdf-page{width:100%!important;height:auto!important;max-width:none}
  .welcome{padding:18px 10px;width:100%}.welcome h1{font-size:23px;line-height:1.2}.welcome p{font-size:13px}
  .welcome-mark{width:62px;height:72px;font-size:29px}.dropzone{padding:18px 12px}
  .statusbar{height:32px;min-height:32px;padding:0 9px;gap:8px;font-size:10px}#shortcutsBtn{display:none}
  .sidebar.mobile-open,.rightbar.mobile-open{display:flex;position:fixed;left:8px;right:8px;bottom:calc(40px + env(safe-area-inset-bottom));top:auto;max-height:58dvh;z-index:45;border:1px solid #39465b;border-radius:13px;box-shadow:0 16px 50px #000b;overflow:hidden}
- .sidebar.mobile-open .sidebody,.rightbar.mobile-open #properties{overflow:auto;overscroll-behavior:contain}
+ .sidebar.mobile-open .sidebody,.rightbar.mobile-open #properties{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain}
  .sidebar.mobile-open .sidehead,.rightbar.mobile-open .sidehead{height:46px;min-height:46px}
  .mobile-scrim:not(.hidden){display:block;position:fixed;inset:56px 0 32px;z-index:40;background:#05080dbb}
  .field input,.field select{height:44px;font-size:16px}.selection-actions .btn{min-height:44px}
 }
+@media(max-width:400px){.topbar .btn span{display:none}.topbar .btn{width:42px;min-width:42px;padding:0;justify-content:center}.docname{max-width:18vw}.topbar{gap:5px}}
 @media(min-width:621px) and (max-width:900px){.workspace{grid-template-columns:180px minmax(0,1fr)}.rightbar{display:none}.topbar{gap:10px;padding:0 12px}.brand{min-width:115px}}
 @media(orientation:landscape) and (max-height:500px) and (max-width:900px){.topbar{height:48px;min-height:48px}.toolbar{height:48px;min-height:48px}.canvas-area{padding-top:8px}.sidebar.mobile-open,.rightbar.mobile-open{max-height:72dvh}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -149,7 +150,7 @@ $('mobilePagesBtn').onclick=()=>{const panel=document.querySelector('.sidebar'),
 $('mobilePropsBtn').onclick=()=>{const panel=document.querySelector('.rightbar'),open=!panel.classList.contains('mobile-open');closeMobilePanels();if(open){panel.classList.add('mobile-open');$('mobileScrim').classList.remove('hidden')}};
 $('mobileScrim').onclick=closeMobilePanels;
 const dz=$('dropzone');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over')}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over')}));dz.addEventListener('drop',e=>openFile(e.dataTransfer.files[0]));$('canvasArea').addEventListener('scroll',()=>{const pages=[...document.querySelectorAll('.paper-wrap')],visible=pages.find(p=>p.getBoundingClientRect().bottom>100);if(visible){const n=+visible.dataset.page;updateThumb(n);$('statusPage').textContent='Page '+n+' of '+state.pages.length}});
-$('shortcutsBtn').onclick=()=>toast('V: Select · T: Text · Ctrl/⌘+Z: Undo · Delete: Remove');
+$('shortcutsBtn').onclick=()=>toast('V: Select · T: Text · Ctrl/Cmd+Z: Undo · Delete: Remove');
 document.addEventListener('keydown',e=>{if(e.target.matches('input'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo()}else if(e.key==='Delete'||e.key==='Backspace')deleteSelected();else if(e.key.toLowerCase()==='v')setTool('select');else if(e.key.toLowerCase()==='t')setTool('text');else if(e.key==='Escape'){$('textModal').classList.add('hidden');setTool('select')}});
 setTool('select');
 window.addEventListener('resize',()=>{if(!state.pdf)return;clearTimeout(state.resizeTimer);state.resizeTimer=setTimeout(async()=>{const top=$('canvasArea').scrollTop;$('canvasArea').innerHTML='';await Promise.all(state.pages.map(async item=>renderPage(await state.pdf.getPage(item.number),item.number)));renderAnnotations();$('canvasArea').scrollTop=top},180)});
