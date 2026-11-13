@@ -1,5 +1,7 @@
 # PDF — Browser-based PDF editor
 
+<p align="center"><img src="assets/readme-banner.svg" alt="Animated PDF Studio banner" width="100%"></p>
+
 A lightweight, privacy-first PDF workspace. Open a PDF, add annotations and visual elements, then export the edited document. Everything runs in your browser; files are not uploaded to an application server.
 
 ## Features
